@@ -63,4 +63,7 @@ module "ipGroups" {
   resource_group_name = azurerm_resource_group.this.name
   enable_telemetry    = var.enable_telemetry
   ip_addresses        = ["10.0.0.0/16"]
+  tags = {
+    env = "test"
+  }
 }
