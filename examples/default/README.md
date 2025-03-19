@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # Default example
 
-This deploys the module in its simplest form.
+This example shows how to deploy the module in its simplest configuration.
 
 ```hcl
 terraform {
@@ -10,6 +10,10 @@ terraform {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 3.74"
+    }
+    azapi = {
+      source  = "Azure/azapi"
+      version = "~>2.0"
     }
     modtm = {
       source  = "azure/modtm"
@@ -57,15 +61,17 @@ resource "azurerm_resource_group" "this" {
 # Do not specify location here due to the randomization above.
 # Leaving location as `null` will cause the module to use the resource group location
 # with a data source.
-module "test" {
+module "ipGroups" {
   source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
-  location            = azurerm_resource_group.this.location
-  name                = "TODO" # TODO update with module.naming.<RESOURCE_TYPE>.name_unique
-  resource_group_name = azurerm_resource_group.this.name
 
-  enable_telemetry = var.enable_telemetry # see variables.tf
+  location            = azurerm_resource_group.this.location
+  name                = "avm-ip-group"
+  resource_group_name = azurerm_resource_group.this.name
+  enable_telemetry    = var.enable_telemetry
+  ip_addresses        = ["10.0.0.0/16"]
+  tags = {
+    env = "test"
+  }
 }
 ```
 
@@ -75,6 +81,8 @@ module "test" {
 The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.5)
+
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~>2.0)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
 
@@ -116,6 +124,12 @@ No outputs.
 
 The following Modules are called:
 
+### <a name="module_ipGroups"></a> [ipGroups](#module\_ipGroups)
+
+Source: ../../
+
+Version:
+
 ### <a name="module_naming"></a> [naming](#module\_naming)
 
 Source: Azure/naming/azurerm
@@ -127,12 +141,6 @@ Version: ~> 0.3
 Source: Azure/avm-utl-regions/azurerm
 
 Version: ~> 0.1
-
-### <a name="module_test"></a> [test](#module\_test)
-
-Source: ../../
-
-Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

@@ -1,3 +1,3 @@
 # Default example
 
-This shows how to deploy an IP Group using minimal, default values from the module
+This example shows how to deploy the module in its simplest configuration.
