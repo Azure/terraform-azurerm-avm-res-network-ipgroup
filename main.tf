@@ -1,13 +1,14 @@
 resource "azapi_resource" "this" {
-  type     = "Microsoft.Network/ipGroups@2024-05-01"
-  name     = var.name
-  location = var.location
-  tags     = var.tags
-  body = jsonencode({
+  type      = "Microsoft.Network/ipGroups@2024-05-01"
+  name      = var.name
+  parent_id = data.azurerm_resource_group.this.id
+  location  = var.location
+  tags      = var.tags
+  body = {
     properties = {
       ipAddresses = var.ip_addresses
     }
-  })
+  }
 }
 
 resource "azurerm_management_lock" "this" {
@@ -30,4 +31,8 @@ resource "azurerm_role_assignment" "this" {
   role_definition_id                     = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? each.value.role_definition_id_or_name : null
   role_definition_name                   = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? null : each.value.role_definition_id_or_name
   skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
+}
+
+data "azurerm_resource_group" "this" {
+  name = var.resource_group_name
 }
