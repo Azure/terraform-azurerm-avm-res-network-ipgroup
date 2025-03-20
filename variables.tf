@@ -1,3 +1,13 @@
+variable "ip_addresses" {
+  type        = set(string)
+  description = "The list of IP addresses that belong to the IP Group."
+
+  validation {
+    condition     = length(var.ip_addresses) > 0
+    error_message = "IP Address must contain at least one element."
+  }
+}
+
 variable "location" {
   type        = string
   description = "Azure region where the resource should be deployed."
@@ -11,16 +21,6 @@ variable "name" {
   validation {
     condition     = can(regex("^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9_]$", var.name))
     error_message = "The name must begin with a letter or number, end with a letter, number or underscore, and may contain only letters, numbers, underscores, periods, or hyphens."
-  }
-}
-
-variable "ip_addresses" {
-  type        = set(string)
-  description = "The list of IP addresses that belong to the IP Group."
-
-  validation {
-    condition     = length(var.ip_addresses) > 0
-    error_message = "IP Address must contain at least one element."
   }
 }
 
@@ -68,6 +68,7 @@ variable "role_assignments" {
     condition                              = optional(string, null)
     condition_version                      = optional(string, null)
     delegated_managed_identity_resource_id = optional(string, null)
+    principal_type                         = optional(string, null)
   }))
   default     = {}
   description = <<DESCRIPTION
