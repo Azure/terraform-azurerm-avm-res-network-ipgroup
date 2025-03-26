@@ -7,7 +7,7 @@ resource "azapi_resource" "this" {
   }
   location  = var.location
   name      = var.name
-  parent_id = data.azurerm_resource_group.this.id
+  parent_id = "/subscriptions/${data.azapi_client_config.this.subscription_id}/resourceGroups/${var.resource_group_name}"
   tags      = var.tags
 }
 
@@ -33,6 +33,4 @@ resource "azurerm_role_assignment" "this" {
   skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
 }
 
-data "azurerm_resource_group" "this" {
-  name = var.resource_group_name
-}
+data "azapi_client_config" "this" {}

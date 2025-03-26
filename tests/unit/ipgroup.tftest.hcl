@@ -25,7 +25,27 @@ run "ip_address_validation" {
   command = plan
 
   variables {
-    ip_addresses = []
+    ip_addresses = ["456.127.89.0"]
+  }
+
+  expect_failures = [var.ip_addresses]
+}
+
+run "ip_address_cidr_validation" {
+  command = plan
+
+  variables {
+    ip_addresses = ["10.0.0.0/56"]
+  }
+
+  expect_failures = [var.ip_addresses]
+}
+
+run "ip_address_range_validation" {
+  command = plan
+
+  variables {
+    ip_addresses = ["10.0.0.0=10.0.0.23"]
   }
 
   expect_failures = [var.ip_addresses]
