@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# Ignored example for e2e tests
+# Complete Example
 
-This example will not be run as an e2e test as it has the .e2eignore file in the same directory.
+This example shows how to deploy the Ip Group module with multiple IP addresses, Resource locks and Role assignment.
 
 ```hcl
 terraform {
@@ -9,11 +9,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.74"
-    }
-    modtm = {
-      source  = "azure/modtm"
-      version = "~> 0.3"
+      version = "~> 4.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -57,16 +53,32 @@ resource "azurerm_resource_group" "this" {
 # Do not specify location here due to the randomization above.
 # Leaving location as `null` will cause the module to use the resource group location
 # with a data source.
-module "test" {
+module "ip_groups" {
   source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
-  location            = azurerm_resource_group.this.location
-  name                = "TODO" # TODO update with module.naming.<RESOURCE_TYPE>.name_unique
-  resource_group_name = azurerm_resource_group.this.name
 
-  enable_telemetry = var.enable_telemetry # see variables.tf
+  location            = azurerm_resource_group.this.location
+  name                = "avm-ip-group"
+  resource_group_name = azurerm_resource_group.this.name
+  enable_telemetry    = var.enable_telemetry
+  ip_addresses        = ["10.0.0.0/24", "10.0.0.10", "192.168.1.1-192.168.1.100", "10.0.0.10-10.0.0.12"]
+  tags = {
+    env = "test"
+  }
+  lock = {
+    kind = "CanNotDelete"
+    name = "lock"
+  }
+  role_assignments = {
+    r1 = {
+      role_definition_id_or_name       = "Reader"
+      principal_id                     = data.azurerm_client_config.this.object_id
+      description                      = "AVM IP Group Reader"
+      skip_service_principal_aad_check = false
+    }
+  }
 }
+
+data "azurerm_client_config" "this" {}
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -76,9 +88,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.5)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 3.74)
-
-- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
@@ -88,6 +98,7 @@ The following resources are used by this module:
 
 - [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
+- [azurerm_client_config.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -116,6 +127,12 @@ No outputs.
 
 The following Modules are called:
 
+### <a name="module_ip_groups"></a> [ip\_groups](#module\_ip\_groups)
+
+Source: ../../
+
+Version:
+
 ### <a name="module_naming"></a> [naming](#module\_naming)
 
 Source: Azure/naming/azurerm
@@ -127,12 +144,6 @@ Version: ~> 0.3
 Source: Azure/avm-utl-regions/azurerm
 
 Version: ~> 0.1
-
-### <a name="module_test"></a> [test](#module\_test)
-
-Source: ../../
-
-Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

@@ -3,11 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.21"
-    }
-    modtm = {
-      source  = "azure/modtm"
-      version = "~> 0.3"
+      version = "~> 4.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -51,13 +47,29 @@ resource "azurerm_resource_group" "this" {
 # Do not specify location here due to the randomization above.
 # Leaving location as `null` will cause the module to use the resource group location
 # with a data source.
-module "test" {
+module "ip_groups" {
   source = "../../"
-  # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
-  # ...
-  location            = azurerm_resource_group.this.location
-  name                = "TODO" # TODO update with module.naming.<RESOURCE_TYPE>.name_unique
-  resource_group_name = azurerm_resource_group.this.name
 
-  enable_telemetry = var.enable_telemetry # see variables.tf
+  location            = azurerm_resource_group.this.location
+  name                = "avm-ip-group"
+  resource_group_name = azurerm_resource_group.this.name
+  enable_telemetry    = var.enable_telemetry
+  ip_addresses        = ["10.0.0.0/24", "10.0.0.10", "192.168.1.1-192.168.1.100", "10.0.0.10-10.0.0.12"]
+  tags = {
+    env = "test"
+  }
+  lock = {
+    kind = "CanNotDelete"
+    name = "lock"
+  }
+  role_assignments = {
+    r1 = {
+      role_definition_id_or_name       = "Reader"
+      principal_id                     = data.azurerm_client_config.this.object_id
+      description                      = "AVM IP Group Reader"
+      skip_service_principal_aad_check = false
+    }
+  }
 }
+
+data "azurerm_client_config" "this" {}
