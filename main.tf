@@ -1,14 +1,14 @@
 resource "azapi_resource" "this" {
-  type = "Microsoft.Network/ipGroups@2024-05-01"
+  location  = var.location
+  name      = var.name
+  parent_id = "/subscriptions/${data.azurerm_subscription.this.subscription_id}/resourceGroups/${var.resource_group_name}"
+  type      = "Microsoft.Network/ipGroups@2024-05-01"
   body = {
     properties = {
       ipAddresses = var.ip_addresses
     }
   }
-  location  = var.location
-  name      = var.name
-  parent_id = "/subscriptions/${data.azurerm_subscription.this.subscription_id}/resourceGroups/${var.resource_group_name}"
-  tags      = var.tags
+  tags = var.tags
 }
 
 resource "azurerm_management_lock" "this" {

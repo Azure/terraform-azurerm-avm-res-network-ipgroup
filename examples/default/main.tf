@@ -1,5 +1,6 @@
 terraform {
   required_version = "~> 1.5"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -50,11 +51,11 @@ resource "azurerm_resource_group" "this" {
 module "ip_groups" {
   source = "../../"
 
+  ip_addresses        = ["10.0.0.0/16"]
   location            = azurerm_resource_group.this.location
   name                = "avm-ip-group"
   resource_group_name = azurerm_resource_group.this.name
   enable_telemetry    = var.enable_telemetry
-  ip_addresses        = ["10.0.0.0/16"]
   tags = {
     env = "test"
   }

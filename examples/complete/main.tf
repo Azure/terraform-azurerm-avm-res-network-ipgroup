@@ -1,5 +1,6 @@
 terraform {
   required_version = "~> 1.5"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -50,14 +51,11 @@ resource "azurerm_resource_group" "this" {
 module "ip_groups" {
   source = "../../"
 
+  ip_addresses        = ["10.0.0.0/24", "10.0.0.10", "192.168.1.1-192.168.1.100", "10.0.0.10-10.0.0.12"]
   location            = azurerm_resource_group.this.location
   name                = "avm-ip-group"
   resource_group_name = azurerm_resource_group.this.name
   enable_telemetry    = var.enable_telemetry
-  ip_addresses        = ["10.0.0.0/24", "10.0.0.10", "192.168.1.1-192.168.1.100", "10.0.0.10-10.0.0.12"]
-  tags = {
-    env = "test"
-  }
   lock = {
     kind = "CanNotDelete"
     name = "lock"
@@ -70,19 +68,13 @@ module "ip_groups" {
       skip_service_principal_aad_check = false
     }
   }
+  tags = {
+    env = "test"
+  }
 }
 
 data "azurerm_client_config" "this" {}
 
-output "name" {
-  value = module.ip_groups.name
-}
 
-output "resource_id" {
-  value = module.ip_groups.resource_id
-}
 
-output "ip_address" {
-  value = module.ip_groups.ip_address
-}
 
