@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.5"
+  required_version = "~> 1.9"
 
   required_providers {
     azurerm = {
@@ -15,6 +15,7 @@ terraform {
 
 provider "azurerm" {
   features {}
+  resource_provider_registrations = "none"
 }
 
 
