@@ -11,3 +11,10 @@ output "resource_id" {
   DESCRIPTION
   value       = azapi_resource.this.id
 }
+
+output "ip_address" {
+  description = <<DESCRIPTION
+  The IP address of created Ip Group.
+  DESCRIPTION
+  value       = [for ip in azapi_resource.this.body.properties.ipAddresses : ip]
+}

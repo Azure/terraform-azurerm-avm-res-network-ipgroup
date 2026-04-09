@@ -73,3 +73,16 @@ module "ip_groups" {
 }
 
 data "azurerm_client_config" "this" {}
+
+output "name" {
+  value = module.ip_groups.name
+}
+
+output "resource_id" {
+  value = module.ip_groups.resource_id
+}
+
+output "ip_address" {
+  value = module.ip_groups.ip_address
+}
+
