@@ -1,5 +1,6 @@
 terraform {
-  required_version = "~> 1.5"
+  required_version = "~> 1.9"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -21,7 +22,7 @@ provider "azurerm" {
 # This allows us to randomize the region for the resource group.
 module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
-  version = "~> 0.1"
+  version = "0.12.0"
 }
 
 # This allows us to randomize the region for the resource group.
@@ -34,7 +35,7 @@ resource "random_integer" "region_index" {
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = "~> 0.3"
+  version = "0.4.3"
 }
 
 # This is required for resource modules
@@ -50,14 +51,11 @@ resource "azurerm_resource_group" "this" {
 module "ip_groups" {
   source = "../../"
 
+  ip_addresses        = ["10.0.0.0/24", "10.0.0.10", "192.168.1.1-192.168.1.100", "10.0.0.10-10.0.0.12"]
   location            = azurerm_resource_group.this.location
   name                = "avm-ip-group"
   resource_group_name = azurerm_resource_group.this.name
   enable_telemetry    = var.enable_telemetry
-  ip_addresses        = ["10.0.0.0/24", "10.0.0.10", "192.168.1.1-192.168.1.100", "10.0.0.10-10.0.0.12"]
-  tags = {
-    env = "test"
-  }
   lock = {
     kind = "CanNotDelete"
     name = "lock"
@@ -70,6 +68,13 @@ module "ip_groups" {
       skip_service_principal_aad_check = false
     }
   }
+  tags = {
+    env = "test"
+  }
 }
 
 data "azurerm_client_config" "this" {}
+
+
+
+

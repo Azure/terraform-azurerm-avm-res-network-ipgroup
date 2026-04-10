@@ -1,14 +1,18 @@
 resource "azapi_resource" "this" {
-  type = "Microsoft.Network/ipGroups@2024-05-01"
+  location  = var.location
+  name      = var.name
+  parent_id = "/subscriptions/${data.azurerm_subscription.this.subscription_id}/resourceGroups/${var.resource_group_name}"
+  type      = "Microsoft.Network/ipGroups@2024-05-01"
   body = {
     properties = {
       ipAddresses = var.ip_addresses
     }
   }
-  location  = var.location
-  name      = var.name
-  parent_id = "/subscriptions/${data.azapi_client_config.this.subscription_id}/resourceGroups/${var.resource_group_name}"
-  tags      = var.tags
+  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  tags           = var.tags
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
 resource "azurerm_management_lock" "this" {
@@ -33,4 +37,4 @@ resource "azurerm_role_assignment" "this" {
   skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
 }
 
-data "azapi_client_config" "this" {}
+data "azurerm_subscription" "this" {}
