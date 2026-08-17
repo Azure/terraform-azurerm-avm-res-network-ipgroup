@@ -4,7 +4,7 @@ terraform {
   required_providers {
     assert = {
       source  = "hashicorp/assert"
-      version = "~> 0.15.0"
+      version = "~> 0.16.0"
     }
     azapi = {
       source  = "Azure/azapi"
@@ -12,7 +12,7 @@ terraform {
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
     modtm = {
       source  = "azure/modtm"
