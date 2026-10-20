@@ -25,6 +25,10 @@ variables {
 run "telemetry_enabled" {
   command = plan
 
+  variables {
+    enable_telemetry = true
+  }
+
   assert {
     condition = (
       length(azapi_resource.telemetry) == 1 &&
